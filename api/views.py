@@ -6,7 +6,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
 
-
 # Create your views here.
 
 
@@ -107,7 +106,33 @@ class UserInRoom (APIView):
             
             
         
+class LeaveRoom(APIView):
     
+  def post(self , request , format=None):
+      
+    if 'room_code' in self.request.session:
+          
+          code = self.request.session.pop("room_code")
+          print(code)
+          
+          host_key = self.request.session.session_key
+          Room_resultt = Room.objects.filter(host = host_key)
+          
+          if len(Room_resultt) > 0 :
+              
+              room = Room_resultt[0]
+              
+              room.delete()
+              
+    
+    
+    
+    message = {'Message': 'success'}
+    return Response(message, status=status.HTTP_200_OK)          
+        
+              
+           
+         
     
     
     

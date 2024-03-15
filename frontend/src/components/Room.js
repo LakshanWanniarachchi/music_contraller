@@ -1,46 +1,75 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
 import { Grid, Typography, Button } from "@mui/material";
-import { Link } from "react-router-dom";
 
-const Room = (props) => {
-  const [guest_can_pause, set_guest_can_pause] = useState(2);
-  const [vote_to_skip, set_vote_to_skip] = useState(true);
-  const [ishost, sethost] = useState(true);
+const Room = () => {
+  const [guest_can_pause, setGuestCanPause] = useState(false);
+  const [vote_to_skip, setVoteToSkip] = useState(false);
+  const [isHost, setIsHost] = useState(false);
+  const [message, setMessage] = useState("");
   const { roomCode } = useParams();
+
+  useEffect(() => {
+    // Fetch room details or perform any other initialization tasks
+    // You can use the roomCode here to fetch room-specific data
+    // For now, we're just setting dummy values
+    setGuestCanPause(true);
+    setVoteToSkip(true);
+    setIsHost(true);
+  }, [roomCode]);
+
+  const handleLeaveRoom = () => {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    };
+    fetch("/api/leave-room", requestOptions)
+      .then((response) => response.json()) // Parse JSON response
+      .then((data) => {
+        setMessage(data.Message);
+        // You may choose to redirect to another page after leaving the room
+        // Example:
+        // history.push('/some-other-route');
+      })
+      .catch((error) => {
+        console.error("Error leaving room:", error);
+      });
+  };
 
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} align="center">
         <Typography variant="h4" component="h4">
-          guest_can_pause : {guest_can_pause}
+          Guest Can Pause: {guest_can_pause.toString()}
         </Typography>
       </Grid>
       <Grid item xs={12} align="center">
         <Typography variant="h4" component="h4">
-          {" "}
-          vote_to_skip : {vote_to_skip.toString()}{" "}
+          Vote to Skip: {vote_to_skip.toString()}
         </Typography>
       </Grid>
       <Grid item xs={12} align="center">
         <Typography variant="h4" component="h4">
-          {" "}
-          ishost : {ishost.toString()}{" "}
+          Is Host: {isHost.toString()}
         </Typography>
       </Grid>
       <Grid item xs={12} align="center">
         <Typography variant="h4" component="h4">
-          {" "}
-          roomCode : {roomCode}{" "}
+          Room Code: {roomCode}
         </Typography>
       </Grid>
       <Grid item xs={12} align="center">
-        <Button variant="contained" color={"Primary"} to="/" component={Link}>
+        <Typography variant="h4" component="h4">
+          Message: {message}
+        </Typography>
+      </Grid>
+      <Grid item xs={12} align="center">
+        <Button variant="contained" color="primary" onClick={handleLeaveRoom}>
           Leave Room
         </Button>
       </Grid>
     </Grid>
   );
 };
+
 export default Room;
