@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
@@ -9,11 +9,13 @@ import FormControl from "@mui/material/FormControl";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CreateRoomPage = (props) => {
   const [guestCanpause, setGuestCanpause] = useState(true);
   const [VoteToSkip, setVoteToSkip] = useState(2);
+
+  const navigate = useNavigate();
 
   const handleGuestCanpauseChange = (event) => {
     setGuestCanpause(event.target.value === true ? true : false);
@@ -31,7 +33,8 @@ const CreateRoomPage = (props) => {
         vote_to_skip: VoteToSkip,
       });
 
-      console.log(respons.data);
+      navigate(`/room/${respons.data.code}`);
+      console.log(respons);
     } catch (error) {
       console.error(error);
     }
